@@ -1,0 +1,50 @@
+---
+title: "Simulations"
+author: "Clare Horscroft"
+date: "24/06/2021"
+output: html_document
+---
+
+```{r packages, message=FALSE}
+library(simulateGP)
+library(systemfit)
+```
+
+```{r parameters}
+# Set causal effect of x on y
+beta_xy <- -0.3
+
+# Set number of instruments for x
+nsnp <- 3
+
+# Set number of individuals to simulate
+nid <- 10000
+
+# Set variance explained in x by the instruments
+rsq_gx <- 0.05
+
+# allele frequencies of 0.5
+af=0.5
+
+# effect sizes of u on x
+ux_eff <- 0.3
+
+# effect sizes of u on y
+uy_eff <- 0.3
+
+source("../R/run_simulation.R")
+set.seed(74218479)
+
+sim<-list()
+for (i in 1:100){
+  sim[[i]]<-run_simulation(beta_xy,nsnp,nid,rsq_gx,af,ux_eff,uy_eff)
+}
+```
+
+```{r results}
+effects<-sapply(1:100,function(x)sim[[x]]$mr$coefficients[2])
+
+summary(effects)
+boxplot(effects)
+```
+
